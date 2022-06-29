@@ -1,17 +1,33 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 
+	"github.com/darolpz/students/internal/database"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	dbName := os.Getenv("DB_NAME")
+	dbUser := os.Getenv("DB_USER")
+	dbPass := os.Getenv("DB_PASS")
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	databaseService, err := database.NewDatabaseService(dbUser, dbPass, dbHost, dbPort, dbName)
+	if err != nil {
+		panic(err)
+	}
+
+	student := databaseService.GetStudents()
+	fmt.Printf("%v", student)
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
 	})
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	// listen and serve on
+	r.Run(":8080")
 }

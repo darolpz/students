@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/darolpz/students/internal/database"
+	"github.com/darolpz/students/internal/repository"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,7 +21,13 @@ func main() {
 		panic(err)
 	}
 
-	student := databaseService.GetStudents()
+	studentRepository := repository.NewStudentsRepo(databaseService)
+
+	student, err := studentRepository.FindStudent(2)
+	if err != nil {
+		panic(err)
+	}
+
 	fmt.Printf("%v", student)
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {

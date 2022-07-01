@@ -12,6 +12,7 @@ import (
 type IDatabaseService interface {
 	FindStudent(id string) (model.Student, error)
 	ListStudents(offset, limit string) ([]model.Student, error)
+	CreateStudent(student model.Student) (model.Student, error)
 }
 
 type databaseService struct {
@@ -25,6 +26,7 @@ var (
 	ErrFindStudent        = errors.New("couldn't find student")
 	ErrListStudents       = errors.New("couldn't list students")
 	ErrStudentNotFound    = errors.New("student not found")
+	ErrCreateStudent      = errors.New("couldn't create student")
 )
 
 func NewDatabaseService(dbUser, dbPass, dbHost, dbPort, dbName string) (*databaseService, error) {
@@ -53,4 +55,11 @@ func (s databaseService) ListStudents(limit, offset string) ([]model.Student, er
 		return students, fmt.Errorf("%w: %s", ErrListStudents, err)
 	}
 	return students, nil
+}
+
+func (s databaseService) CreateStudent(student model.Student) (model.Student, error) {
+	if err := s.db.Create(&student).Error; err != nil {
+		return student, fmt.Errorf("%w: %s", ErrCreateStudent, err)
+	}
+	return student, nil
 }

@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/darolpz/students/internal/model"
 	"github.com/darolpz/students/internal/repository"
 	"github.com/gin-gonic/gin"
 )
@@ -48,6 +49,23 @@ func createStudentsEndpoints(app *gin.Engine, repo repository.IStudentsRepositor
 
 		c.JSON(http.StatusOK, gin.H{
 			"students": students,
+		})
+	})
+
+	students.POST("/", func(c *gin.Context) {
+		newStudent := model.Student{}
+		if err := c.BindJSON(&newStudent); err != nil {
+			c.String(http.StatusBadRequest, err.Error())
+			return
+		}
+		student, err := repo.CreateStudent(newStudent)
+		if err != nil {
+			log.Printf("couldnt create student: %s", err)
+			c.String(http.StatusInternalServerError, err.Error())
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"student": student,
 		})
 	})
 }

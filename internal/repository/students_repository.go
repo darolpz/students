@@ -13,6 +13,7 @@ type IStudentsRepository interface {
 	FindStudent(id string) (model.Student, error)
 	ListStudents(offset, limit string) ([]model.Student, error)
 	CreateStudent(student model.Student) (model.Student, error)
+	UpdateStudent(id string, student model.Student) (model.Student, error)
 }
 
 type StudentsRepo struct {
@@ -40,4 +41,8 @@ func (s StudentsRepo) ListStudents(offset, limit string) ([]model.Student, error
 
 func (s StudentsRepo) CreateStudent(student model.Student) (model.Student, error) {
 	return s.db.CreateStudent(student)
+}
+
+func (s StudentsRepo) UpdateStudent(id string, student model.Student) (model.Student, error) {
+	return s.db.UpdateStudent(id, student)
 }

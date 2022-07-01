@@ -68,4 +68,22 @@ func createStudentsEndpoints(app *gin.Engine, repo repository.IStudentsRepositor
 			"student": student,
 		})
 	})
+
+	students.PATCH("/:id", func(c *gin.Context) {
+		studentID := c.Param("id")
+		newStudent := model.Student{}
+		if err := c.BindJSON(&newStudent); err != nil {
+			c.String(http.StatusBadRequest, err.Error())
+			return
+		}
+		student, err := repo.UpdateStudent(studentID, newStudent)
+		if err != nil {
+			log.Printf("couldnt create student: %s", err)
+			c.String(http.StatusInternalServerError, err.Error())
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"student": student,
+		})
+	})
 }

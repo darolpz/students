@@ -10,7 +10,8 @@ import (
 )
 
 type IDatabaseService interface {
-	FindStudent(id int) (model.Student, error)
+	FindStudent(id string) (model.Student, error)
+	ListStudents(offset, limit string) ([]model.Student, error)
 }
 
 type databaseService struct {
@@ -23,6 +24,7 @@ var (
 	ErrDatabaseConnection = errors.New("couldn't connect to database")
 	ErrFindStudent        = errors.New("couldn't find student")
 	ErrListStudents       = errors.New("couldn't list students")
+	ErrStudentNotFound    = errors.New("student not found")
 )
 
 func NewDatabaseService(dbUser, dbPass, dbHost, dbPort, dbName string) (*databaseService, error) {
@@ -33,17 +35,21 @@ func NewDatabaseService(dbUser, dbPass, dbHost, dbPort, dbName string) (*databas
 	return &databaseService{db: database}, nil
 }
 
-func (s databaseService) FindStudent(id int) (model.Student, error) {
+func (s databaseService) FindStudent(id string) (model.Student, error) {
 	var student model.Student
-	if err := s.db.Raw("SELECT * FROM student WHERE ID = ?", id).Scan(&student).Error; err != nil {
+	if err := s.db.First(&student, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return student, fmt.Errorf("%w: %s", ErrStudentNotFound, err)
+		}
 		return student, fmt.Errorf("%w: %s", ErrFindStudent, err)
 	}
+
 	return student, nil
 }
 
-func (s databaseService) ListStudent() ([]model.Student, error) {
+func (s databaseService) ListStudents(limit, offset string) ([]model.Student, error) {
 	var students []model.Student
-	if err := s.db.Raw("SELECT * FROM student").Scan(&students).Error; err != nil {
+	if err := s.db.Find(&students).Error; err != nil {
 		return students, fmt.Errorf("%w: %s", ErrListStudents, err)
 	}
 	return students, nil

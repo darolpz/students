@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"net/http"
+	"log"
 	"os"
 
 	"github.com/darolpz/students/internal/database"
@@ -18,23 +18,15 @@ func main() {
 	dbPort := os.Getenv("DB_PORT")
 	databaseService, err := database.NewDatabaseService(dbUser, dbPass, dbHost, dbPort, dbName)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	studentRepository := repository.NewStudentsRepo(databaseService)
 
-	student, err := studentRepository.FindStudent(2)
-	if err != nil {
-		panic(err)
-	}
+	app := gin.Default()
+	craeteHealthEndpoints(app)
+	createStudentsEndpoints(app, studentRepository)
 
-	fmt.Printf("%v", student)
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
 	// listen and serve on
-	r.Run(":8080")
+	app.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 }

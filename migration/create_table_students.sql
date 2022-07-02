@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS students(
     id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(40) NOT NULL,
-    last_name VARCHAR(40) NOT NULL,
+    first_name VARCHAR(20) NOT NULL,
+    last_name VARCHAR(20) NOT NULL,
     age INT(3) NOT NULL,
-    email VARCHAR(50) 
+    email VARCHAR(50) UNIQUE NOT NULL, 
 );

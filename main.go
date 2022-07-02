@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/darolpz/students/cmd/handlers"
 	"github.com/darolpz/students/internal/database"
 	"github.com/darolpz/students/internal/repository"
 	"github.com/gin-gonic/gin"
@@ -24,8 +25,8 @@ func main() {
 	studentRepository := repository.NewStudentsRepo(databaseService)
 
 	app := gin.Default()
-	craeteHealthEndpoints(app)
-	createStudentsEndpoints(app, studentRepository)
+	handlers.CreateHealthEndpoints(app)
+	handlers.CreateStudentsEndpoints(app, studentRepository)
 
 	// listen and serve on
 	app.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))

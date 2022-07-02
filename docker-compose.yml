@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  students-mysql:
+    image: mysql
+    container_name: students-mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=students
+      - MYSQL_USER=students
+      - MYSQL_PASSWORD=students_123
+    ports:
+      - 3306:3306
+    volumes:
+      - "./migration:/docker-entrypoint-initdb.d"
+    networks:
+      - students_network
+
+  students-app:
+    container_name: students-app
+    build:
+      dockerfile: ${PWD}/Dockerfile
+      context: ${PWD}/
+    image: daropl12/students-app
+    restart: always
+    environment:
+      - DB_HOST=students-mysql
+      - DB_PORT=3306
+      - DB_NAME=students
+      - DB_USER=students
+      - DB_PASS=students_123
+      - PORT=8080
+      - HOST=localhost
+    ports:
+      - 8080:8080
+    depends_on:
+      - students-mysql
+    networks:
+      - students_network
+
+volumes:
+  mysql_data:
+networks:
+  students_network:
+    driver: bridge

@@ -1,8 +1,7 @@
 FROM golang:alpine
 
 RUN apk update && \
-    apk upgrade && \
-    apk add git npm
+    apk upgrade
 
 # Set the application directory
 WORKDIR $GOPATH/src/github.com/darolpz/students
@@ -19,7 +18,6 @@ RUN go install -v ./...
 # This container exposes port 8080 to the outside world
 EXPOSE 8080
 
-ENV PORT=8080
 # Run the executable
 CMD ["students"]
 

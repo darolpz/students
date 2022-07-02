@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func craeteHealthEndpoints(app *gin.Engine) {
+func CreateHealthEndpoints(app *gin.Engine) {
 	app.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
@@ -18,7 +18,7 @@ func craeteHealthEndpoints(app *gin.Engine) {
 	})
 }
 
-func createStudentsEndpoints(app *gin.Engine, repo repository.IStudentsRepository) {
+func CreateStudentsEndpoints(app *gin.Engine, repo repository.IStudentsRepository) {
 	students := app.Group("students")
 
 	students.GET("/:id", func(c *gin.Context) {

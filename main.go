@@ -23,7 +23,7 @@ func main() {
 
 	app := gin.Default()
 	handlers.CreateHealthEndpoints(app)
-	handlers.CreateStudentsEndpoints(app, services.studentRepository)
+	handlers.CreateStudentsEndpoints(app, services.studentRepository, services.authService)
 	handlers.CreateAuthEndpoints(app, services.userRepository, services.authService)
 
 	// listen and serve on

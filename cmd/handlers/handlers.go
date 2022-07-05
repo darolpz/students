@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/darolpz/students/cmd/handlers/middleware"
 	"github.com/darolpz/students/internal/auth"
 	"github.com/darolpz/students/internal/repository"
 	"github.com/gin-gonic/gin"
@@ -16,9 +17,12 @@ func CreateHealthEndpoints(app *gin.Engine) {
 	})
 }
 
-func CreateStudentsEndpoints(app *gin.Engine, studentsRepo repository.IStudentsRepository) {
+func CreateStudentsEndpoints(
+	app *gin.Engine,
+	studentsRepo repository.IStudentsRepository,
+	authService auth.IAuthService) {
 	students := app.Group("students")
-
+	students.Use(middleware.AuthMiddleware(authService))
 	students.GET("/:id", FindStudent(studentsRepo))
 
 	students.GET("/list", ListStudents(studentsRepo))

@@ -14,6 +14,8 @@ type IDatabaseService interface {
 	ListStudents(offset, limit string) ([]model.Student, error)
 	CreateStudent(student model.Student) (model.Student, error)
 	UpdateStudent(id string, student model.Student) (model.Student, error)
+	FindUserByEmail(email string) (model.User, error)
+	CreateUser(user model.User) (model.User, error)
 }
 
 type databaseService struct {
@@ -25,10 +27,13 @@ const connectionFormat = "%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Lo
 var (
 	ErrDatabaseConnection = errors.New("couldn't connect to database")
 	ErrFindStudent        = errors.New("couldn't find student")
-	ErrListStudents       = errors.New("couldn't list students")
 	ErrStudentNotFound    = errors.New("student not found")
+	ErrListStudents       = errors.New("couldn't list students")
 	ErrCreateStudent      = errors.New("couldn't create student")
 	ErrUpdateStudent      = errors.New("couldn't update student")
+	ErrUserNotFound       = errors.New("user not found")
+	ErrFindUser           = errors.New("couldn't find user")
+	ErrCreateUser         = errors.New("couldn't create user")
 )
 
 func NewDatabaseService(dbUser, dbPass, dbHost, dbPort, dbName string) (*databaseService, error) {
@@ -84,4 +89,22 @@ func (s databaseService) UpdateStudent(id string, newStudent model.Student) (mod
 		return student, fmt.Errorf("%w: %s", ErrUpdateStudent, err)
 	}
 	return student, nil
+}
+
+func (s databaseService) FindUserByEmail(email string) (model.User, error) {
+	var user model.User
+	if err := s.db.First(&user, "email = ?", email).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return user, fmt.Errorf("%w: %s", ErrUserNotFound, err)
+		}
+		return user, fmt.Errorf("%w: %s", ErrFindUser, err)
+	}
+	return user, nil
+}
+
+func (s databaseService) CreateUser(user model.User) (model.User, error) {
+	if err := s.db.Create(&user).Error; err != nil {
+		return user, fmt.Errorf("%w: %s", ErrCreateUser, err)
+	}
+	return user, nil
 }

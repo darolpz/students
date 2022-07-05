@@ -10,11 +10,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func FindStudent(repo repository.IStudentsRepository) func(c *gin.Context) {
+func FindStudent(studentsRepo repository.IStudentsRepository) func(c *gin.Context) {
 	return func(c *gin.Context) {
+		// Get query params
 		studentID := c.Param("id")
-		student, err := repo.FindStudent(studentID)
+		// Retrieve student from repository
+		student, err := studentsRepo.FindStudent(studentID)
 		if err != nil {
+			// Check if error was student not found
 			if errors.Is(err, repository.ErrStudentNotFound) {
 				log.Printf("couldnt find student with id %s: %s", studentID, err)
 				c.String(http.StatusNotFound, err.Error())
@@ -29,11 +32,14 @@ func FindStudent(repo repository.IStudentsRepository) func(c *gin.Context) {
 	}
 }
 
-func ListStudents(repo repository.IStudentsRepository) func(c *gin.Context) {
+func ListStudents(studentsRepo repository.IStudentsRepository) func(c *gin.Context) {
 	return func(c *gin.Context) {
+		// Get query params
 		offset := c.DefaultQuery("offset", "0")
 		limit := c.DefaultQuery("limit", "10")
-		students, err := repo.ListStudents(offset, limit)
+
+		// Retrieve students from repository
+		students, err := studentsRepo.ListStudents(offset, limit)
 		if err != nil {
 			log.Printf("couldnt list student: %s", err)
 			c.String(http.StatusInternalServerError, err.Error())
@@ -45,14 +51,17 @@ func ListStudents(repo repository.IStudentsRepository) func(c *gin.Context) {
 	}
 }
 
-func CreateStudent(repo repository.IStudentsRepository) func(c *gin.Context) {
+func CreateStudent(studentsRepo repository.IStudentsRepository) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		newStudent := model.Student{}
+		// Bind the JSON body to the newStudent struct
 		if err := c.BindJSON(&newStudent); err != nil {
 			c.String(http.StatusBadRequest, err.Error())
 			return
 		}
-		student, err := repo.CreateStudent(newStudent)
+
+		// Persist the new student to repository
+		student, err := studentsRepo.CreateStudent(newStudent)
 		if err != nil {
 			log.Printf("couldnt create student: %s", err)
 			c.String(http.StatusInternalServerError, err.Error())
@@ -64,15 +73,18 @@ func CreateStudent(repo repository.IStudentsRepository) func(c *gin.Context) {
 	}
 }
 
-func UpdateStudent(repo repository.IStudentsRepository) func(c *gin.Context) {
+func UpdateStudent(studentsRepo repository.IStudentsRepository) func(c *gin.Context) {
 	return func(c *gin.Context) {
+		// Get query params
 		studentID := c.Param("id")
 		newStudent := model.Student{}
+		// Bind the JSON body to the newStudent struct
 		if err := c.BindJSON(&newStudent); err != nil {
 			c.String(http.StatusBadRequest, err.Error())
 			return
 		}
-		student, err := repo.UpdateStudent(studentID, newStudent)
+		// Update the student in the repository
+		student, err := studentsRepo.UpdateStudent(studentID, newStudent)
 		if err != nil {
 			log.Printf("couldnt create student: %s", err)
 			c.String(http.StatusInternalServerError, err.Error())

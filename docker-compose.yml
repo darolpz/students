@@ -32,6 +32,7 @@ services:
       - DB_PASS=students_123
       - PORT=8080
       - HOST=localhost
+      - JWT_SECRET=darolpz
     ports:
       - 8080:8080
     depends_on:

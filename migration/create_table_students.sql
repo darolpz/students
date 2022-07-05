@@ -3,5 +3,5 @@ CREATE TABLE IF NOT EXISTS students(
     first_name VARCHAR(20) NOT NULL,
     last_name VARCHAR(20) NOT NULL,
     age INT(3) NOT NULL,
-    email VARCHAR(50) UNIQUE NOT NULL, 
+    email VARCHAR(50) UNIQUE NOT NULL
 );

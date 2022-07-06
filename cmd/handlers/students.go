@@ -29,11 +29,12 @@ func FindStudent(studentsRepo repository.IStudentsRepository) func(c *gin.Contex
 		if err != nil {
 			// Check if error was student not found
 			if errors.Is(err, repository.ErrStudentNotFound) {
-				log.Printf("couldnt find student with id %s: %s", studentID, err)
+				log.Printf("could not find student with id %s: %s", studentID, err)
 				c.String(http.StatusNotFound, err.Error())
 				return
 			}
 			c.String(http.StatusInternalServerError, err.Error())
+			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{
@@ -49,7 +50,6 @@ func FindStudent(studentsRepo repository.IStudentsRepository) func(c *gin.Contex
 // @Param        offset    query     string  false  "list offset"  0
 // @Param        limit    query     string  false  "list limit"  0
 // @Success      200 {array} model.Student
-// @Failure      404  {string} string
 // @Failure      500 {string} string
 // @Router       /students/list [get]
 // @Security Authorization
@@ -62,8 +62,9 @@ func ListStudents(studentsRepo repository.IStudentsRepository) func(c *gin.Conte
 		// Retrieve students from repository
 		students, err := studentsRepo.ListStudents(offset, limit)
 		if err != nil {
-			log.Printf("couldnt list student: %s", err)
+			log.Printf("could not list student: %s", err)
 			c.String(http.StatusInternalServerError, err.Error())
+			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{
@@ -80,6 +81,7 @@ func ListStudents(studentsRepo repository.IStudentsRepository) func(c *gin.Conte
 // @Accept       json
 // @Produce      json
 // @Success      200 {object} model.Student
+// @Failure      400 {string} string
 // @Failure      500 {string} string
 // @Router       /students [post]
 // @Security Authorization
@@ -95,8 +97,9 @@ func CreateStudent(studentsRepo repository.IStudentsRepository) func(c *gin.Cont
 		// Persist the new student to repository
 		student, err := studentsRepo.CreateStudent(newStudent)
 		if err != nil {
-			log.Printf("couldnt create student: %s", err)
+			log.Printf("could not create student: %s", err)
 			c.String(http.StatusInternalServerError, err.Error())
+			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{
@@ -114,7 +117,8 @@ func CreateStudent(studentsRepo repository.IStudentsRepository) func(c *gin.Cont
 // @Accept       json
 // @Produce      json
 // @Success      200 {object} model.Student
-// @Failure      400 {string} string "bad request"
+// @Failure      400 {string} string
+// @Failure      404 {string} string
 // @Failure      500 {string} string
 // @Router       /students/{student_id} [patch]
 // @Security Authorization
@@ -131,12 +135,49 @@ func UpdateStudent(studentsRepo repository.IStudentsRepository) func(c *gin.Cont
 		// Update the student in the repository
 		student, err := studentsRepo.UpdateStudent(studentID, newStudent)
 		if err != nil {
-			log.Printf("couldnt create student: %s", err)
+			if errors.Is(err, repository.ErrStudentNotFound) {
+				log.Printf("could not find student with id %s: %s", studentID, err)
+				c.String(http.StatusNotFound, err.Error())
+				return
+			}
+			log.Printf("could not create student: %s", err)
 			c.String(http.StatusInternalServerError, err.Error())
+			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{
 			"student": student,
 		})
+	}
+}
+
+// DeleteStudent godoc
+// @Summary      Delete student
+// @Description  delete student data
+// @Tags         students
+// @Param        student_id  path string  true  "student_id"  1
+// @Success      200 {string} string
+// @Failure      404 {string} string "bad request"
+// @Failure      500 {string} string
+// @Router       /students/{student_id} [delete]
+// @Security Authorization
+func DeleteStudent(studentRepo repository.IStudentsRepository) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		// Get query params
+		studentID := c.Param("id")
+		// Delete the student from the repository
+		err := studentRepo.DeleteStudent(studentID)
+		if err != nil {
+			if errors.Is(err, repository.ErrStudentNotFound) {
+				log.Printf("could not find student with id %s: %s", studentID, err)
+				c.String(http.StatusNotFound, err.Error())
+				return
+			}
+			log.Printf("could not delete student: %s", err)
+			c.String(http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		c.String(http.StatusOK, "student deleted")
 	}
 }

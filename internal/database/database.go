@@ -16,6 +16,7 @@ type IDatabaseService interface {
 	UpdateStudent(id string, student model.Student) (model.Student, error)
 	FindUserByEmail(email string) (model.User, error)
 	CreateUser(user model.User) (model.User, error)
+	DeleteStudent(id string) error
 }
 
 type databaseService struct {
@@ -34,6 +35,7 @@ var (
 	ErrUserNotFound       = errors.New("user not found")
 	ErrFindUser           = errors.New("couldn't find user")
 	ErrCreateUser         = errors.New("couldn't create user")
+	ErrDeleteStudent      = errors.New("couldn't delete student")
 )
 
 func NewDatabaseService(dbUser, dbPass, dbHost, dbPort, dbName string) (*databaseService, error) {
@@ -107,4 +109,19 @@ func (s databaseService) CreateUser(user model.User) (model.User, error) {
 		return user, fmt.Errorf("%w: %s", ErrCreateUser, err)
 	}
 	return user, nil
+}
+
+func (s databaseService) DeleteStudent(id string) error {
+	var student model.Student
+	if err := s.db.First(&student, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return fmt.Errorf("%w: %s", ErrStudentNotFound, err)
+		}
+		return fmt.Errorf("%w: %s", ErrFindStudent, err)
+	}
+
+	if err := s.db.Delete(&student).Error; err != nil {
+		return fmt.Errorf("%w: %s", ErrDeleteStudent, err)
+	}
+	return nil
 }

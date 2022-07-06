@@ -36,6 +36,8 @@ func CreateStudentsEndpoints(
 	students.POST("/", CreateStudent(studentsRepo))
 
 	students.PATCH("/:id", UpdateStudent(studentsRepo))
+
+	students.DELETE("/:id", DeleteStudent(studentsRepo))
 }
 
 func CreateAuthEndpoints(app *gin.Engine, usersRepo repository.IUsersRepository, authService auth.IAuthService) {

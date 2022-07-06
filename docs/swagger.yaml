@@ -1,0 +1,252 @@
+basePath: /
+definitions:
+  model.Authentication:
+    description: Authentication information with email and password
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  model.Student:
+    description: student information with student_id,first name, last name, age and
+      email
+    properties:
+      age:
+        type: integer
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+    type: object
+  model.User:
+    description: user information with user_id, name, email, password and role
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: daropl12@gmail.com
+    name: Dario Lopez
+    url: http://www.github.com/darolpz
+  description: This is an example CRUD project.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: darolpz students
+  version: "0.1"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: get authorization token
+      parameters:
+      - description: Authentication
+        in: body
+        name: student
+        required: true
+        schema:
+          $ref: '#/definitions/model.Authentication'
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Login
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: create new user
+      parameters:
+      - description: user
+        in: body
+        name: student
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Student'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Register user
+      tags:
+      - auth
+  /ping:
+    get:
+      description: returns pong
+      responses:
+        "200":
+          description: pong
+          schema:
+            type: string
+      summary: Health check
+      tags:
+      - health
+  /students:
+    post:
+      consumes:
+      - application/json
+      description: creates a new student
+      parameters:
+      - description: user
+        in: body
+        name: student
+        required: true
+        schema:
+          $ref: '#/definitions/model.Student'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Student'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Authorization: []
+      summary: Create student
+      tags:
+      - students
+  /students/{student_id}:
+    get:
+      description: get student by id
+      parameters:
+      - description: student_id
+        in: path
+        name: student_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Student'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Authorization: []
+      summary: Find Student
+      tags:
+      - students
+    patch:
+      consumes:
+      - application/json
+      description: modify student data
+      parameters:
+      - description: student_id
+        in: path
+        name: student_id
+        required: true
+        type: string
+      - description: user
+        in: body
+        name: student
+        required: true
+        schema:
+          $ref: '#/definitions/model.Student'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Student'
+        "400":
+          description: bad request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Authorization: []
+      summary: Update student
+      tags:
+      - students
+  /students/list:
+    get:
+      description: returns all students
+      parameters:
+      - description: list offset
+        in: query
+        name: offset
+        type: string
+      - description: list limit
+        in: query
+        name: limit
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Student'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Authorization: []
+      summary: List Student
+      tags:
+      - students
+securityDefinitions:
+  Authorization:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

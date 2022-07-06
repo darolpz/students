@@ -9,6 +9,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Login godoc
+// @Summary      Login
+// @Description  get authorization token
+// @Tags         auth
+// @Param        student body model.Authentication true "Authentication"
+// @Accept       json
+// @Success      200 {string} token
+// @Failure      400 {string} string
+// @Failure      401 {string} string
+// @Failure      500 {string} string
+// @Router       /auth/login [post]
 func Login(repo repository.IUsersRepository, authService auth.IAuthService) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		var auth model.Authentication
@@ -37,12 +48,20 @@ func Login(repo repository.IUsersRepository, authService auth.IAuthService) func
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"token": token,
-		})
+		c.String(http.StatusOK, token)
 	}
 }
 
+// Register godoc
+// @Summary      Register user
+// @Description  create new user
+// @Tags         auth
+// @Param        student body model.User true "user"
+// @Accept       json
+// @Success      200 {object} model.Student
+// @Failure      400 {string} string
+// @Failure      500 {string} string
+// @Router       /auth/register [post]
 func Register(repo repository.IUsersRepository, authService auth.IAuthService) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		var newUser model.User

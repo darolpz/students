@@ -9,6 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Ping godoc
+// @Summary      Health check
+// @Description  returns pong
+// @Tags         health
+// @Success      200 {string} string "pong"
+// @Router       /ping [get]
 func CreateHealthEndpoints(app *gin.Engine) {
 	app.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{

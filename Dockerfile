@@ -15,6 +15,10 @@ RUN go get -d -v ./...
 # Install the package
 RUN go install -v ./...
 
+#Run swag init to create documents
+RUN go install github.com/swaggo/swag/cmd/swag@v1.8.3
+RUN swag init
+
 # This container exposes port 8080 to the outside world
 EXPOSE 8080
 

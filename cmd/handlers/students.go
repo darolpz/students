@@ -10,6 +10,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// FindStudent godoc
+// @Summary      Find Student
+// @Description  get student by id
+// @Tags         students
+// @Param        student_id  path string  true  "student_id"  1
+// @Success      200 {object} model.Student
+// @Failure      404  {string} string
+// @Failure      500 {string} string
+// @Router       /students/{student_id} [get]
+// @Security Authorization
 func FindStudent(studentsRepo repository.IStudentsRepository) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		// Get query params
@@ -32,6 +42,17 @@ func FindStudent(studentsRepo repository.IStudentsRepository) func(c *gin.Contex
 	}
 }
 
+// ListStudent godoc
+// @Summary      List Student
+// @Description  returns all students
+// @Tags         students
+// @Param        offset    query     string  false  "list offset"  0
+// @Param        limit    query     string  false  "list limit"  0
+// @Success      200 {array} model.Student
+// @Failure      404  {string} string
+// @Failure      500 {string} string
+// @Router       /students/list [get]
+// @Security Authorization
 func ListStudents(studentsRepo repository.IStudentsRepository) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		// Get query params
@@ -51,6 +72,17 @@ func ListStudents(studentsRepo repository.IStudentsRepository) func(c *gin.Conte
 	}
 }
 
+// CreateStudent godoc
+// @Summary      Create student
+// @Description  creates a new student
+// @Tags         students
+// @Param        student body model.Student true "user"
+// @Accept       json
+// @Produce      json
+// @Success      200 {object} model.Student
+// @Failure      500 {string} string
+// @Router       /students [post]
+// @Security Authorization
 func CreateStudent(studentsRepo repository.IStudentsRepository) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		newStudent := model.Student{}
@@ -73,6 +105,19 @@ func CreateStudent(studentsRepo repository.IStudentsRepository) func(c *gin.Cont
 	}
 }
 
+// UpdateStudent godoc
+// @Summary      Update student
+// @Description  modify student data
+// @Tags         students
+// @Param        student_id  path string  true  "student_id"  1
+// @Param        student body model.Student true "user"
+// @Accept       json
+// @Produce      json
+// @Success      200 {object} model.Student
+// @Failure      400 {string} string "bad request"
+// @Failure      500 {string} string
+// @Router       /students/{student_id} [patch]
+// @Security Authorization
 func UpdateStudent(studentsRepo repository.IStudentsRepository) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		// Get query params

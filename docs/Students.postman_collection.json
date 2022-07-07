@@ -1,0 +1,226 @@
+{
+	"info": {
+		"_postman_id": "2dc13e7e-7d3f-4507-90c9-31a8c69d87dd",
+		"name": "Students",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Dario\",\n    \"email\": \"daropl12@gmail.com\",\n    \"password\": \"dariio12\",\n    \"role\": \"admin\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{student_url}}/auth/register",
+					"host": [
+						"{{student_url}}"
+					],
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Auth Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"daropl12@gmail.com\",\n    \"password\": \"dariio12\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{student_url}}/auth/login",
+					"host": [
+						"{{student_url}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Student Create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"first_name\": \"Ricardo\",\n    \"last_name\": \"Fort\",\n    \"age\": 40,\n    \"email\": \"ricardo.fort@gmail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{student_url}}/students",
+					"host": [
+						"{{student_url}}"
+					],
+					"path": [
+						"students"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Student List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRhcm9wbDEyQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTY1NzA5MTgzNX0.N1AUwd7WDXmu-YLkhu7LTzZKKS_8b4NFWgaKKNJU3SM",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{student_url}}/students/list",
+					"host": [
+						"{{student_url}}"
+					],
+					"path": [
+						"students",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Student Find",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{student_url}}/students/:student_id",
+					"host": [
+						"{{student_url}}"
+					],
+					"path": [
+						"students",
+						":student_id"
+					],
+					"variable": [
+						{
+							"key": "student_id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Student Update",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"first_name\": \"Ricardo Andres\",\n    \"last_name\": \"Fortin\",\n    \"age\": 25,\n    \"email\": \"ricardo.fort@gmail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{student_url}}/students/:student_id",
+					"host": [
+						"{{student_url}}"
+					],
+					"path": [
+						"students",
+						":student_id"
+					],
+					"variable": [
+						{
+							"key": "student_id",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Student Delete",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRhcm9wbDEyQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTY1NzA5MTgzNX0.N1AUwd7WDXmu-YLkhu7LTzZKKS_8b4NFWgaKKNJU3SM",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{student_url}}/students/:student_id",
+					"host": [
+						"{{student_url}}"
+					],
+					"path": [
+						"students",
+						":student_id"
+					],
+					"variable": [
+						{
+							"key": "student_id",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "student_url",
+			"value": "localhost:8080"
+		}
+	]
+}

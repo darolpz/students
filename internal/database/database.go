@@ -11,7 +11,7 @@ import (
 
 type IDatabaseService interface {
 	FindStudent(id string) (model.Student, error)
-	ListStudents(offset, limit string) ([]model.Student, error)
+	ListStudents(offset, limit int) ([]model.Student, error)
 	CreateStudent(student model.Student) (model.Student, error)
 	UpdateStudent(id string, student model.Student) (model.Student, error)
 	FindUserByEmail(email string) (model.User, error)
@@ -58,9 +58,9 @@ func (s databaseService) FindStudent(id string) (model.Student, error) {
 	return student, nil
 }
 
-func (s databaseService) ListStudents(limit, offset string) ([]model.Student, error) {
+func (s databaseService) ListStudents(limit, offset int) ([]model.Student, error) {
 	var students []model.Student
-	if err := s.db.Find(&students).Error; err != nil {
+	if err := s.db.Limit(limit).Offset(offset).Find(&students).Error; err != nil {
 		return students, fmt.Errorf("%w: %s", ErrListStudents, err)
 	}
 	return students, nil

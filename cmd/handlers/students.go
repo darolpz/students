@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/darolpz/students/internal/model"
 	"github.com/darolpz/students/internal/repository"
@@ -59,8 +60,19 @@ func ListStudents(studentsRepo repository.IStudentsRepository) func(c *gin.Conte
 		offset := c.DefaultQuery("offset", "0")
 		limit := c.DefaultQuery("limit", "10")
 
+		offsetInt, err := strconv.Atoi(offset)
+		if err != nil {
+			c.String(http.StatusBadRequest, err.Error())
+			return
+		}
+		limitInt, err := strconv.Atoi(limit)
+		if err != nil {
+			c.String(http.StatusBadRequest, err.Error())
+			return
+		}
+
 		// Retrieve students from repository
-		students, err := studentsRepo.ListStudents(offset, limit)
+		students, err := studentsRepo.ListStudents(offsetInt, limitInt)
 		if err != nil {
 			log.Printf("could not list student: %s", err)
 			c.String(http.StatusInternalServerError, err.Error())

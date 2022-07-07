@@ -11,7 +11,7 @@ var ErrStudentNotFound = database.ErrStudentNotFound
 
 type IStudentsRepository interface {
 	FindStudent(id string) (model.Student, error)
-	ListStudents(offset, limit string) ([]model.Student, error)
+	ListStudents(offset, limit int) ([]model.Student, error)
 	CreateStudent(student model.Student) (model.Student, error)
 	UpdateStudent(id string, student model.Student) (model.Student, error)
 	DeleteStudent(id string) error
@@ -36,7 +36,7 @@ func (s studentsRepo) FindStudent(id string) (model.Student, error) {
 	return student, nil
 }
 
-func (s studentsRepo) ListStudents(offset, limit string) ([]model.Student, error) {
+func (s studentsRepo) ListStudents(offset, limit int) ([]model.Student, error) {
 	return s.db.ListStudents(offset, limit)
 }
 

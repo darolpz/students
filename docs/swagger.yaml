@@ -140,6 +140,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/model.Student'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
         "500":
           description: Internal Server Error
           schema:
@@ -150,6 +154,32 @@ paths:
       tags:
       - students
   /students/{student_id}:
+    delete:
+      description: delete student data
+      parameters:
+      - description: student_id
+        in: path
+        name: student_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: bad request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Authorization: []
+      summary: Delete student
+      tags:
+      - students
     get:
       description: get student by id
       parameters:
@@ -200,7 +230,11 @@ paths:
           schema:
             $ref: '#/definitions/model.Student'
         "400":
-          description: bad request
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
           schema:
             type: string
         "500":
@@ -231,10 +265,6 @@ paths:
             items:
               $ref: '#/definitions/model.Student'
             type: array
-        "404":
-          description: Not Found
-          schema:
-            type: string
         "500":
           description: Internal Server Error
           schema:

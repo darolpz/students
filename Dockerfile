@@ -1,7 +1,8 @@
 FROM golang:alpine
 
 RUN apk update && \
-    apk upgrade
+    apk upgrade && \
+    apk add gcc musl-dev
 
 # Set the application directory
 WORKDIR $GOPATH/src/github.com/darolpz/students
@@ -18,6 +19,9 @@ RUN go install -v ./...
 #Run swag init to create documents
 RUN go install github.com/swaggo/swag/cmd/swag@v1.8.3
 RUN swag init
+
+# Run tests
+RUN go test ./...
 
 # This container exposes port 8080 to the outside world
 EXPOSE 8080

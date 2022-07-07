@@ -92,7 +92,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRhcm9wbDEyQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTY1NzA5MTgzNX0.N1AUwd7WDXmu-YLkhu7LTzZKKS_8b4NFWgaKKNJU3SM",
+						"value": "Bearer {{jwt}}",
 						"type": "text"
 					}
 				],
@@ -173,7 +173,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRhcm9wbDEyQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTY1NzA5MTgzNX0.N1AUwd7WDXmu-YLkhu7LTzZKKS_8b4NFWgaKKNJU3SM",
+						"value": "Bearer  {{jwt}}",
 						"type": "text"
 					}
 				],

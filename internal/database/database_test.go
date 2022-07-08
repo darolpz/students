@@ -480,7 +480,46 @@ func Test_databaseService_CreateUser(t *testing.T) {
 		want          model.User
 		expectedError error
 	}{
-		{},
+		{
+			name: "should_create_user",
+			user: model.User{
+				Name:     "John",
+				Email:    "john.doe@gmail.com",
+				Password: "123456",
+				Role:     "admin",
+			},
+			setMock: func(mock sqlmock.Sqlmock) {
+				mock.ExpectBegin()
+				mock.ExpectExec("INSERT INTO `users`").
+					WithArgs("John", "john.doe@gmail.com", "123456", "admin").
+					WillReturnResult(sqlmock.NewResult(1, 1))
+				mock.ExpectCommit()
+			},
+			want: model.User{
+				ID:       1,
+				Name:     "John",
+				Email:    "john.doe@gmail.com",
+				Password: "123456",
+				Role:     "admin",
+			},
+		},
+		{
+			name: "should_return_error_create_user",
+			user: model.User{
+				Name:     "John",
+				Email:    "john.doe@gmail.com",
+				Password: "123456",
+				Role:     "admin",
+			},
+			setMock: func(mock sqlmock.Sqlmock) {
+				mock.ExpectBegin()
+				mock.ExpectExec("INSERT INTO `users`").
+					WithArgs("John", "john.doe@gmail.com", "123456", "admin").
+					WillReturnError(errors.New("somer error"))
+				mock.ExpectRollback()
+			},
+			expectedError: ErrCreateUser,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -492,6 +531,100 @@ func Test_databaseService_CreateUser(t *testing.T) {
 			} else {
 				require.NoError(t, err)
 				require.Equal(t, tt.want, got)
+			}
+		})
+	}
+}
+
+func Test_databaseService_DeleteStudent(t *testing.T) {
+	mockDB, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	defer mockDB.Close()
+
+	dialector := mysql.New(mysql.Config{
+		Conn:                      mockDB,
+		DriverName:                "mysql",
+		DSN:                       "sqlmock_db",
+		SkipInitializeWithVersion: true,
+	})
+
+	db, err := gorm.Open(dialector)
+	require.NoError(t, err)
+	s := databaseService{
+		db: db,
+	}
+
+	tests := []struct {
+		name          string
+		student_id    string
+		setMock       func(mock sqlmock.Sqlmock)
+		expectedError error
+	}{
+		{
+			name:       "should_delete_student",
+			student_id: "1",
+			setMock: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(
+					regexp.QuoteMeta("SELECT * FROM `students` WHERE `students`.`id` = ? ORDER BY `students`.`id` LIMIT 1")).
+					WithArgs("1").
+					WillReturnRows(sqlmock.NewRows([]string{"id", "first_name", "last_name", "email", "age"}).
+						AddRow("1", "John", "Doe", "john.doe@gmail.com", "33"))
+				mock.ExpectBegin()
+				mock.ExpectExec("DELETE FROM `students`").
+					WithArgs(1).
+					WillReturnResult(sqlmock.NewResult(1, 1))
+				mock.ExpectCommit()
+			},
+		},
+		{
+			name:       "should_return_error_student_not_found",
+			student_id: "1",
+			setMock: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(
+					regexp.QuoteMeta("SELECT * FROM `students` WHERE `students`.`id` = ? ORDER BY `students`.`id` LIMIT 1")).
+					WithArgs("1").
+					WillReturnError(gorm.ErrRecordNotFound)
+			},
+			expectedError: ErrStudentNotFound,
+		},
+		{
+			name:       "should_return_error_find_student",
+			student_id: "1",
+			setMock: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(
+					regexp.QuoteMeta("SELECT * FROM `students` WHERE `students`.`id` = ? ORDER BY `students`.`id` LIMIT 1")).
+					WithArgs("1").
+					WillReturnError(errors.New("somer error"))
+			},
+			expectedError: ErrFindStudent,
+		},
+		{
+			name:       "should_return_error_delete_student",
+			student_id: "1",
+			setMock: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(
+					regexp.QuoteMeta("SELECT * FROM `students` WHERE `students`.`id` = ? ORDER BY `students`.`id` LIMIT 1")).
+					WithArgs("1").
+					WillReturnRows(sqlmock.NewRows([]string{"id", "first_name", "last_name", "email", "age"}).
+						AddRow("1", "John", "Doe", "john.doe@gmail.com", "33"))
+				mock.ExpectBegin()
+				mock.ExpectExec("DELETE FROM `students`").
+					WithArgs(1).
+					WillReturnError(errors.New("somer error"))
+				mock.ExpectRollback()
+			},
+			expectedError: ErrDeleteStudent,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.setMock(mock)
+			err := s.DeleteStudent(tt.student_id)
+			if tt.expectedError != nil {
+				require.Error(t, err)
+				require.True(t, errors.Is(err, tt.expectedError))
+			} else {
+				require.NoError(t, err)
 			}
 		})
 	}

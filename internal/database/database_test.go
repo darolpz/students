@@ -150,7 +150,7 @@ func Test_databaseService_ListStudents(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.setMock(mock)
-			got, err := s.ListStudents(tt.limit, tt.offset)
+			got, err := s.ListStudents(tt.offset, tt.limit)
 			if tt.expectedError != nil {
 				require.Error(t, err)
 				require.True(t, errors.Is(err, tt.expectedError))

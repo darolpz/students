@@ -58,7 +58,7 @@ func (s databaseService) FindStudent(id string) (model.Student, error) {
 	return student, nil
 }
 
-func (s databaseService) ListStudents(limit, offset int) ([]model.Student, error) {
+func (s databaseService) ListStudents(offset, limit int) ([]model.Student, error) {
 	var students []model.Student
 	if err := s.db.Limit(limit).Offset(offset).Find(&students).Error; err != nil {
 		return students, fmt.Errorf("%w: %s", ErrListStudents, err)
